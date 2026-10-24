@@ -138,7 +138,7 @@ Name the output `EnshroudedMenu.dll` so it matches `library_path` in the manifes
 | Steam Input event interception | `src/steaminput.cpp` |
 | Skill Tree mod toggle | `src/mods.cpp` |
 
-Code is only patched while every other thread of the game is suspended and none of them is executing the bytes being replaced. Hooked functions jump into code caves placed within ±2 GB of the game module; all constants and slider values live in that cave page, never inside game structures.
+Code is only patched while every other thread of the game is suspended and none of them is executing the bytes being replaced. Hooked functions jump into code caves placed within ±2 GB of the game module; all constants and slider values live in that cave page, never inside game structures. The one exception is Safe Fall Height: the fall heights sit in read-only game memory, so the cave only records where they are and the menu writes them once per frame (briefly unprotecting the range), restoring the originals when switched off.
 
 ## Notes
 

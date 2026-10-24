@@ -391,6 +391,7 @@ bool onPresent(DeviceData* d, VkQueue queue, uint32_t queueFamily, const VkPrese
 
     input::pollHotkey();
     gamepad::poll();
+    cheats::tick();
     cheats::debugTick();
     const bool open = input::menuOpen();
 

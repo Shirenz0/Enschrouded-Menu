@@ -45,6 +45,9 @@ void savePosition();
 bool teleportToSaved();
 void nudgeUp(int units);
 
+// Menu-side writes for cheats whose game data a cave cannot write. Call once per frame.
+void tick();
+
 // Logs probe counters/values of active hooks every 10 s. Call once per frame.
 void debugTick();
 

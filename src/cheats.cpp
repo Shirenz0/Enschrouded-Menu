@@ -1,7 +1,8 @@
 // Game hooks for Enshrouded 1.0.
 // Each hook: find the pattern, check the original bytes, then either patch in place or build a
 // code cave (jmp in, jmp abs back). Constants and slider values live in our own page, never in
-// game structs. Every cave was cross-checked against ml64 output.
+// game structs (except Safe Fall Height, written from the menu side). Every cave was
+// cross-checked against ml64 output.
 
 #include "cheats.h"
 
@@ -116,6 +117,19 @@ bool safeWrite(void* dst, const void* src, size_t n)
     } __except (EXCEPTION_EXECUTE_HANDLER) {
         return false;
     }
+}
+
+// For game data in read-only pages (a plain write from a cave there kills the game). Makes the
+// range writable, writes and puts the old protection back.
+bool protectedWrite(void* dst, const void* src, size_t n)
+{
+    DWORD old = 0;
+    if (!VirtualProtect(dst, n, PAGE_READWRITE, &old) && !VirtualProtect(dst, n, PAGE_WRITECOPY, &old))
+        return false;
+    bool ok = safeWrite(dst, src, n);
+    DWORD tmp = 0;
+    VirtualProtect(dst, n, old, &tmp);
+    return ok;
 }
 
 // --- hooks ----------------------------------------------------------------------------------
@@ -838,28 +852,45 @@ bool prepareBlockId(Cheat& c)
 }
 
 // Fall damage heights (vanilla min 8 / max 16) in the player movement config, the same block the
-// slope thresholds live in. Player = 10.0f at [rax+3E94h]. OFF restores 8/16.
-float* g_fallMin = nullptr;
-float* g_fallMax = nullptr;
+// slope thresholds live in. Player = 10.0f at [rax+3E94h]. The block is read-only memory, so the
+// cave only records the pointer and fallTick() writes from the menu side.
+// OFF restores 8/16.
+Cheat* g_fallCheat = nullptr;
 uintptr_t* g_fallPtr = nullptr;
+uintptr_t g_fallWritten = 0; // block that already holds our values
+float g_fallValue = 0;
+
+void writeFall(uintptr_t block, float minH, const char* what)
+{
+    const float v[2] = {minH, minH * 2.0f};
+    if (protectedWrite(reinterpret_cast<void*>(block), v, sizeof(v)))
+        LOG("Safe Fall Height: %s %.0f/%.0f", what, v[0], v[1]);
+    else
+        LOG("Safe Fall Height: write to %p failed (%lu)", reinterpret_cast<void*>(block), GetLastError());
+}
+
+void fallTick()
+{
+    if (!g_fallCheat || !g_fallCheat->on || !*g_fallPtr)
+        return;
+    if (*g_fallPtr == g_fallWritten && g_fallCheat->cur == g_fallValue)
+        return;
+    g_fallWritten = *g_fallPtr;
+    g_fallValue = g_fallCheat->cur;
+    writeFall(g_fallWritten, g_fallValue, "set");
+}
 
 bool prepareFallHeight(Cheat& c)
 {
     Hook& h = newHook();
     c.hooks = {&h};
-    g_fallMin = dataF(c.info.def);
-    g_fallMax = dataF(c.info.def * 2.0f);
+    g_fallCheat = &c;
     g_fallPtr = dataPtr();
-    c.onValue = [](Cheat& self) {
-        *g_fallMin = self.cur;
-        *g_fallMax = self.cur * 2.0f;
-    };
     c.customApply = [](Cheat& self, bool on) {
         bool now = applyAll(self, on);
-        if (!on && *g_fallPtr) {
-            const float vanilla[2] = {8.0f, 16.0f};
-            if (safeWrite(reinterpret_cast<void*>(*g_fallPtr), vanilla, sizeof(vanilla)))
-                LOG("Safe Fall Height: restored 8/16");
+        if (!on && *g_fallPtr && g_fallWritten) {
+            writeFall(*g_fallPtr, 8.0f, "restored");
+            g_fallWritten = 0;
         }
         return now;
     };
@@ -868,12 +899,6 @@ bool prepareFallHeight(Cheat& c)
                         emitIsPlayer(e, 0xB8, 0x3E94);            // cmp dword [rax+3E94h],10.0f
                         size_t orig = e.jcc(0x75);
                         e.ripRel({0x48, 0x89, 0x05}, g_fallPtr);  // mov [fallPtr],rax
-                        e.bytes({0x52});                          // push rdx
-                        e.ripRel({0x8B, 0x15}, g_fallMin);        // mov edx,[min]
-                        e.bytes({0x89, 0x10});                    // mov [rax],edx
-                        e.ripRel({0x8B, 0x15}, g_fallMax);        // mov edx,[max]
-                        e.bytes({0x89, 0x50, 0x04});              // mov [rax+4],edx
-                        e.bytes({0x5A});                          // pop rdx
                         e.bind(orig);
                         e.bytes({0xF3, 0x0F, 0x10, 0x00});        // movss xmm0,[rax]
                         e.bytes({0x0F, 0x2F, 0x40, 0x04});        // comiss xmm0,[rax+4] (flags for jb)
@@ -1158,6 +1183,11 @@ void nudgeUp(int units)
         v += int64_t(units) << 32;
         safeWrite(y, &v, sizeof(v));
     }
+}
+
+void tick()
+{
+    fallTick();
 }
 
 void debugTick()
