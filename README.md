@@ -9,6 +9,24 @@
 ![Language](https://img.shields.io/badge/C%2B%2B-20-61d4c6?style=for-the-badge&logo=cplusplus&logoColor=white)
 ![Game](https://img.shields.io/badge/Enshrouded-1.0-f59e38?style=for-the-badge)
 
+<br><br>
+
+<img src="docs/images/menu-tabs.gif" alt="E-Menu switching through its tabs" width="408">
+
+<br><br>
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/panel-player.png" alt="Player tab" width="260"><br><b>Player</b></td>
+    <td align="center"><img src="docs/images/panel-move.png" alt="Move tab" width="260"><br><b>Move</b></td>
+    <td align="center"><img src="docs/images/panel-world.png" alt="World tab" width="260"><br><b>World</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/panel-build.png" alt="Build tab" width="260"><br><b>Build</b></td>
+    <td align="center"><img src="docs/images/panel-camera.png" alt="Camera tab" width="260"><br><b>Camera</b></td>
+    <td align="center"><img src="docs/images/panel-mods.png" alt="Mods tab" width="260"><br><b>Mods</b></td>
+  </tr>
+</table>
 
 </div>
 
@@ -36,6 +54,20 @@ E-Menu is a Vulkan implicit layer that adds a glass style overlay menu to Enshro
 | **Mods** | Toggle for a Skill Tree data mod (applies after a restart) |
 
 Sliders return to their default value to switch an option off. Toggles with a value (Water Glow, Camera Distance, Block Material, Max Stack Size, Safe Fall Height, Fly) show their slider once switched on.
+
+## Screenshots
+
+<img src="docs/images/menu-toggles.gif" alt="Switching options on while playing" width="450">
+
+| | |
+|---|---|
+| ![Player tab in game](docs/images/menu-player.png) | ![Move tab in game](docs/images/menu-move.png) |
+| ![World tab in game](docs/images/menu-world.png) | ![Build tab in game](docs/images/menu-build.png) |
+| ![Camera tab in game](docs/images/menu-camera.png) | ![Mods tab in game](docs/images/menu-mods.png) |
+
+![Flying over the landscape](docs/images/flight.gif)
+
+![In game, menu closed](docs/images/in-game.png)
 
 ## Controls
 
