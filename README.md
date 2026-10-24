@@ -83,9 +83,22 @@ While the menu is open the game does not receive keyboard, mouse or controller i
 
 ## Installation
 
-E-Menu is a regular Vulkan implicit layer: one DLL plus its JSON manifest.
+### Installer (recommended)
 
-1. Build `EnshroudedMenu.dll` (see below), or take it from a release.
+1. Download `EnshroudedMenu-<version>.msi` from [Releases](../../releases/latest).
+2. Run it. It installs for your Windows user only and needs no administrator rights. Nothing is placed in the game folder.
+3. Start Enshrouded. A small `E-Menu` toast appears in the top right corner; press `F2`.
+
+The installer is not code-signed, so Windows SmartScreen may show "Windows protected your PC". Click **More info**, then **Run anyway**.
+
+**Uninstall:** Windows Settings → Apps → Installed apps → *E-Menu for Enshrouded* → Uninstall.
+**Update:** run the newer `.msi`; it replaces the old version.
+
+### Manual install
+
+E-Menu is a regular Vulkan implicit layer: one DLL plus its JSON manifest. The `.zip` on the Releases page contains both plus an `INSTALL.txt`.
+
+1. Build `EnshroudedMenu.dll` (see below), or take it from the release `.zip`.
 2. Put `EnshroudedMenu.dll` and `layer/EnshroudedMenu.json` together in a folder, for example `%LOCALAPPDATA%\EnshroudedMenu\layer\`.
 3. Register the manifest for your user: add a `DWORD` value named after the full path of the JSON file, with data `0`, under
 

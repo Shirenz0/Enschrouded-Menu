@@ -107,7 +107,7 @@ void header()
 
     // Version pill, right aligned on the title line.
     ImFont* sf = g_font.small;
-    const char* pill = "v0.5";
+    const char* pill = "v0.5.1";
     ImVec2 ps = sf->CalcTextSizeA(sf->FontSize, FLT_MAX, 0.0f, pill);
     ImVec2 pad(7 * g_s, 3 * g_s);
     ImVec2 pa(p.x + w - ps.x - pad.x * 2, y + (tf->FontSize - ps.y) * 0.5f - pad.y);
