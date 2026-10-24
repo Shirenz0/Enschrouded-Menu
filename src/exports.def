@@ -1,0 +1,5 @@
+LIBRARY EnshroudedMenu
+EXPORTS
+    vkNegotiateLoaderLayerInterfaceVersion = Layer_NegotiateLoaderLayerInterfaceVersion
+    vkGetInstanceProcAddr = Layer_GetInstanceProcAddr
+    vkGetDeviceProcAddr = Layer_GetDeviceProcAddr

@@ -1,0 +1,17 @@
+{
+    "file_format_version": "1.2.0",
+    "layer": {
+        "name": "VK_LAYER_ENSHROUDED_menu",
+        "type": "GLOBAL",
+        "library_path": ".\\EnshroudedMenu.dll",
+        "api_version": "1.4.304",
+        "implementation_version": "1",
+        "description": "Enshrouded in-game menu overlay (F2). Pass-through for every other app.",
+        "functions": {
+            "vkNegotiateLoaderLayerInterfaceVersion": "vkNegotiateLoaderLayerInterfaceVersion"
+        },
+        "disable_environment": {
+            "DISABLE_ENSHROUDED_MENU": "1"
+        }
+    }
+}
